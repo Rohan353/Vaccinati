@@ -27,4 +27,4 @@ mike()
 def test():
     print('if this works i am happy')
 test()
-#trying to do code
+#trying to do code why is readme not working
