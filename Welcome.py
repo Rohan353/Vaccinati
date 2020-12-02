@@ -12,7 +12,7 @@ rohan353()
 def mike():
   y = input("block")
   if y == "chain":
-    print(https: // github.com / Rohan353 / DIDI - 2020.
-    git)
+    print("https: // github.com / Rohan353 / DIDI - 2020.git")
   else:
     print("wrong")
+mike()
