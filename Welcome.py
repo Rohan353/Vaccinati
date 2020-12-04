@@ -27,6 +27,14 @@ mike()
 def test():
     print('if this works i am happy')
 
+
+<< << << < HEAD
+
 # pull request test
 
 # pull test 2
+== == == =
+test()
+# trying to do code why is readme not working
+# test
+>>>>>> > 5f780f903a527844d56e2cbaaa3acc49508d993a
