@@ -10,6 +10,3 @@ Mike\
 Prady\
 Ivar\
 Kourosh\
-print('qwertyuiopsdfghjklzxcvbnm')\
-sdsds\
-OMG WHATS THIS!\
