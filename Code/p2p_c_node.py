@@ -26,6 +26,8 @@ with open(r"C:\Users\Gaming Desktop\DIDI test\DIDI-2020\Code\p2p\s_config.csv.tx
         PORT = int(row['iport'])
         XPORT = int(row['xport'])
         HOST = (row['hostip'])
+        MYIP = (row['publicip'])
+
 
 #### CONFIG FILE ####
 
@@ -87,7 +89,7 @@ print('Connected to cache server on {} and port {}'.format(CACHE_IP, CACHE_PORT)
 print('Sending initial details')
 
 STARTUP = str(STARTUP).encode(FORMAT)
-INFO = str(XPORT).encode(FORMAT)
+INFO = str([MYIP, XPORT]).encode(FORMAT)
 
 c_socket.send(STARTUP)
 c_socket.send(INFO)
@@ -130,6 +132,8 @@ def min_checker():
             message = 'll'.encode(FORMAT)
 
             c_socket.send(message)
+
+            print('Sent message')
 
             time.sleep(30)
 

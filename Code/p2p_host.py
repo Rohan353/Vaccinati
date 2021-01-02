@@ -44,6 +44,7 @@ DISCONNECT = '!DISCONNECT'
 
 
 cnodes = list()
+cconns = set()
 dnodes = 0
 
 
@@ -54,85 +55,92 @@ def dy_min():
 
     while True:
 
-        num_cnodes = len(cnodes)
+        print('Dy_min')
+
+        num_cnodes = len(cconns)
         # 3 is number of connections per dnode
         try:
             min = ((dnodes*3)//num_cnodes)//2
         except:
             min = 1
+            print(f'Min = {min}')
 
-        for x in cnodes:
-            conn = x[0]
+        for conn in cconns:
 
             message_type = 'min'.encode(FORMAT)
             message = str(min).encode(FORMAT)
 
             conn.send(message_type)
             conn.send(message)
+            print('Sent dynamic minimum')
 
-        time.sleep(5)
+        time.sleep(10)
 
 
 def ordered_c_list():
-
     o = cnodes.copy()
 
-    o = sorted(o, key=lambda x: x[3], reverse=False)
+    o = sorted(o, key=lambda x: x[2], reverse=False)
 
     return o
 
 
 def lost_conn(addr):
-
     for x in cnodes:
-        if x[1] == addr:
-            x[3] += -1
+        if x[0] == addr:
+            x[2] += -1
+    print(f'{addr} gained a connection')
 
 
 def gain_conn(addr):
-
     for x in cnodes:
-        if x[1] == addr:
-            x[3] += -1
+        if x[0] == addr:
+            x[2] += -1
+    print(f'{addr} gained a connection')
 
 
 def kick_dnodes(low_conn):
 
     o = ordered_c_list()
 
-    conn = o[len(o)-1][0]
-
+    conn = o[len(o)-1][3]
     message_type = 'lose'.encode(FORMAT)
     message = ''.encode(FORMAT)
 
     if low_conn != conn:
-
+        print('Sending kick message')
         conn.send(message_type)
         conn.send(message)
+        print('Sent kick message')
 
 
-def cnode_handler(conn, addr, xport):
+def cnode_handler(conn, addr, info):
     print(f'CNODE : {addr} has connected')
 
-    cnodes.append([conn, addr, xport, 0])
+    # [addr, xport, 0]
+
+    new_info = [info[0], info[1], 0, conn]
+
+    addr2 = info[0]
+
+    cnodes.append(new_info)
+    cconns.add(conn)
+
+    print(f'CNODE HANDLER added {new_info} to {cnodes}')
 
     connected = True
 
     while connected:
 
-        try:
-            message_type = conn.recv(1024).decode(FORMAT)
-
-        except:
-            message_type = DISCONNECT
+        message_type = conn.recv(1024).decode(FORMAT)
 
         # message = conn.recv(1024).decode(FORMAT) dont think i need this
 
         if message_type == 'l':
-            lost_conn(addr)
+            lost_conn(addr2)
 
         if message_type == 'g':
-            gain_conn(addr)
+            gain_conn(addr2)
 
         if message_type == 'll':  # under connection bracket (dy_min)
             print(f'{addr} needs more clients')
@@ -141,12 +149,15 @@ def cnode_handler(conn, addr, xport):
         # PUT MORE HERE
 
         if message_type == DISCONNECT:
+            print('Disconnected')
             connected = False
-            for x in cnodes:
-                if x[1] == addr:
-                    cnodes.remove(x)
 
-        conn.close()
+    for x in cnodes:
+        if x[0] == addr2:
+            cnodes.remove(x)
+
+    cconns.remove(conn)
+    conn.close()
 
 
 #### C NODE CLASS ####
@@ -160,14 +171,17 @@ def send_conn(conn, addr, excons):
 
     o = [x for x in o if x[1] not in excons]
 
+    print(f'avilable cnodes :  {o}')
+
     new_node = ''
 
     if o == []:
         new_node = '!NONE'
 
     if o != []:
-        new_node = [o[0][1], o[0][2]]
+        new_node = [o[0][0], o[0][1]]
 
+    print(new_node)
     new_node = (str(new_node)).encode(FORMAT)
 
     conn.send(new_node)
@@ -212,10 +226,12 @@ def start():
     s.listen()
     print(
         f'Cache server listening for any new connections on {HOST}, internal port: {PORT}, external port: {XPORT}')
+
     dynamic_minimum = threading.Thread(target=dy_min)
     dynamic_minimum.start()
 
     while True:
+        print('Listening')
         conn, addr = s.accept()
 
         startup_message = conn.recv(1024).decode(
@@ -226,9 +242,10 @@ def start():
         if startup_message:
 
             if startup_message == 1:
-                xport = conn.recv(1024).decode(FORMAT)
+                info = conn.recv(1024).decode(FORMAT)
+                info = eval(info)
                 thread = threading.Thread(
-                    target=cnode_handler, args=(conn, addr, xport))
+                    target=cnode_handler, args=(conn, addr, info))
                 thread.start()
 
             if startup_message == 2:

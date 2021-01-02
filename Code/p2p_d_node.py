@@ -39,11 +39,12 @@ class connection:
 
         if c_node == '!NONE':
             print('No available server nodes \n')
-            time.sleep(120)
+            time.sleep(20)
 
         if c_node != '!NONE':
             # [addr,xport,connection_count]
-            ADDR = (c_node[0], int(c_node[1]))
+            ADDR = (str(c_node[0]), int(c_node[1]))
+            print(ADDR)
             self.s.connect(ADDR)
             ex_cons.append(c_node[0])
             print('Connected to Server node \n')
@@ -63,8 +64,10 @@ class connection:
                     self.setup()
 
             except:
+                print('Server disconnected')
                 self.s.close()
-                ex_cons.remove(addr)
+                if addr in ex_cons:
+                    ex_cons.remove(addr)
                 self.setup()
 
 
@@ -112,6 +115,8 @@ thread1 = threading.Thread(target=con1)
 thread2 = threading.Thread(target=con2)
 thread3 = threading.Thread(target=con3)
 '''
+
+# could have a time related arg to spread out classes evenly
 
 thread1 = threading.Thread(target=connection)
 thread2 = threading.Thread(target=connection)

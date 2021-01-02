@@ -1,2 +1,2 @@
-iport,xport,hostip
-5007,5002,0.0.0.0
+iport,xport,hostip,publicip
+5007,5007,0.0.0.0,127.0.0.1
