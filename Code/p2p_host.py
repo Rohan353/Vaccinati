@@ -50,13 +50,16 @@ dnodes = 0
 #### C NODE CLASS ####
 
 
-def dy_min():  # currently dy_min is implemented as a seperate thread with a timer
-    # later this needs to be a event based func
+def dy_min():
+
     while True:
 
         num_cnodes = len(cnodes)
         # 3 is number of connections per dnode
-        min = ((dnodes*3)//num_cnodes)//2
+        try:
+            min = ((dnodes*3)//num_cnodes)//2
+        except:
+            min = 1
 
         for x in cnodes:
             conn = x[0]
@@ -132,6 +135,7 @@ def cnode_handler(conn, addr, xport):
             gain_conn(addr)
 
         if message_type == 'll':  # under connection bracket (dy_min)
+            print(f'{addr} needs more clients')
             kick_dnodes(conn)
 
         # PUT MORE HERE
