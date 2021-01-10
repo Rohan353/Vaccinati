@@ -12,7 +12,12 @@ EY Blockchain
 #### Team:
 
 Rohan Woodcock
+
 Pradyumn Mishra
+
 Mike Rossberg
+
 Kourosh Mardani
+
 Ivar Boarsma
+
