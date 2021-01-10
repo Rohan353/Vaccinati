@@ -23,5 +23,7 @@ Ivar Boarsma
 
 
 
-Download
+Downloads
 --------
+
+Download the latest file under releases - 
