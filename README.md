@@ -23,14 +23,8 @@ Ivar Boarsma
 
 
 
-Downloads
+Installation
 --------
 
-#### How to install:
-
-- Download and install the latest release of python from https://www.python.org/downloads/ (3.4 and later should be fine)
-- Download the latest stable file under releases - https://github.com/Rohan353/DIDI-2020/releases (do not use pre releases 
-- Unzip the file and the program will be inside the 'code' folder
-
-#### Common Issues:
+Please refer to the setup guide on the wiki
 
