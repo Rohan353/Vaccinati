@@ -6,6 +6,8 @@ Welcome to the repo of our submission to DIDI's Project Design Space http://didi
 About
 -----
 
+Vaccinati is a blockchain that records vaccine information to ensure it cannot be changed or forged.
+
 #### Context:
 
 EY Blockchain
