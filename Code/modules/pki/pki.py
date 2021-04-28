@@ -1,4 +1,4 @@
-# pki module to handle public - private authentication
+# pki module to handle public/private authentication
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization

@@ -1,9 +1,13 @@
 # client file
 
 import socket
-import csv
 import time
 import threading
+import tkinter as tk
+import json
+from modules import blockchain
+from modules.pki import pki
+
 
 # declare constants
 
@@ -20,12 +24,26 @@ if PORT == '1':
     PORT = 5006
 FORMAT = 'utf-8'
 DISCONNECT = '!DISCONNECT'
+HEADER = 64
 ADDR = (HOST, PORT)
 
 # blockchain constants
 
 waiting_list = []
 
+# network constants
+
+query_blockchain = 'qBlockchain'
+query_pending = 'qPending'
+
+state_blockchain = 'sBlockchain'
+state_pending = 'sPending'
+
+ask_blockchain = 'aBlockchain'
+
+respond_blockchain = 'rBlockchain'
+
+confirm = b'confirm'
 
 # open socket and connect
 
@@ -41,14 +59,59 @@ except:
 
 # put query responses here
 
+def send_blockchain():
+
+    coded_blockchain = json.dumps(b.chain)
+
+    smsg = coded_blockchain.encode(FORMAT)
+    msg_length = len(smsg)
+    send_length = str(msg_length).encode(FORMAT)
+    send_length += b' ' * (HEADER-len(send_length))
+
+    s.send(respond_blockchain.encode(FORMAT))
+    time.sleep(0.1)
+    s.send(send_length)
+    time.sleep(0.1)
+    s.send(smsg)
+
 
 def handle_server():
 
+    print('Listening on server')
+
     while True:
-        message = s.recv(1024).decode(FORMAT)
+
+        msg_type = s.recv(1024).decode(FORMAT)
+
+        print('recived message {}'.format(msg_type))
+
+        if msg_type == query_blockchain:
+
+            print('Blockchain query identified')
+
+            msg_header = s.recv(HEADER).decode(FORMAT)
+            msg_length = int(msg_header)
+            coded_blockchain = s.recv(msg_length).decode(FORMAT)
+
+            new_chain = json.loads(coded_blockchain)
+
+            print('recieved new chain')
+
+            print(new_chain)
+
+            b.compare_chain(new_chain)
+
+            s.send(confirm)
+
+        if msg_type == ask_blockchain:
+
+            print('Sending Blockchain')
+
+            send_blockchain()
 
 
 ############################################
+
 
 def blockchain_stats():
     pass
@@ -62,14 +125,15 @@ def add_block():
     pass
 
 
-def start():
-    choice = int(input(
-        'Would you like to 1 - Look at Blockchain Stats, 2 - Mine Blockchain, 3 - Add New Block : '))
+if __name__ == '__main__':
 
+    b = blockchain.Blockchain()
 
-# threading and start
-server_thread = threading.Thread(target=handle_server)
+    message = query_blockchain.encode(FORMAT)
 
-server_thread.start()
+    # threading and start
+    server_thread = threading.Thread(target=handle_server)
 
-start()
+    server_thread.start()
+
+    s.send(message)

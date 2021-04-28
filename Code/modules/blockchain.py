@@ -1,4 +1,4 @@
-# Blockchain module to handle all the blockchain stuff
+# Blockchain module
 
 import hashlib
 import json
@@ -8,13 +8,10 @@ import random
 
 auth_clients = []  # autherised client's public keys - only used to create genesis block
 
+# Difficulty Setting (which hashes are accepted for Proof of Work)
 
-def encrypt(inden, key):
-    pass
-
-
-def deycrypt(cipher, key):
-    pass
+#correct = ['000001', '000002', '000003', '000004']
+correct = ['00']
 
 
 class Blockchain():
@@ -28,13 +25,44 @@ class Blockchain():
     def check_chain(self, chain):
 
         valid = True
+        index = 1
 
         for block in chain:
-            pass
+
+            if index != 1:
+                block['previous_hash'] = self.hash(chain[-1])
+
+            hash = self.hash(block)
+
+            if hash[0:2] not in correct:
+                valid = False
+
+                break
 
         return valid
 
-    # call to create genesis block - check that the pow is complete
+    def compare_chain(self, new_chain):
+
+        print('Compare Chain function intialised')
+
+        try:
+            valid = self.check_chain(new_chain)
+
+            if valid == True:
+
+                print('New chain validated')
+
+                if len(new_chain) > len(self.chain):
+
+                    self.chain = []
+                    self.chain = new_chain
+
+                    print('New chain has been adopted')
+
+        except:
+
+            print('Error when checking new chain')
+
     def new_block(self, pending_vaccination, miner_name=None, previous_hash=None):
 
         block = {
@@ -79,7 +107,7 @@ class Blockchain():
 
             hash = self.hash(block)
 
-            if hash[0:4] == '0000':
+            if hash[0:2] in correct:
                 found = True
 
             attempt += 1
@@ -94,11 +122,24 @@ class Blockchain():
 if __name__ == '__main__':
 
     b = Blockchain()
+    c = Blockchain()
 
     vaccine1 = input()
     vaccine2 = input()
 
     b.new_block(vaccine1)
     b.new_block(vaccine2)
+
+    vaccine1 = input()
+    vaccine2 = input()
+    vaccine3 = input()
+
+    c.new_block(vaccine1)
+    c.new_block(vaccine2)
+    c.new_block(vaccine3)
+
+    c.chain[1]['identification'] = 'Chirag'
+
+    b.compare_chain(c.chain)
 
     print(b.chain)
