@@ -10,8 +10,8 @@ auth_clients = []  # autherised client's public keys - only used to create genes
 
 # Difficulty Setting (which hashes are accepted for Proof of Work)
 
-#correct = ['000001', '000002', '000003', '000004']
-correct = ['00']
+correct = ['000001', '000002', '000003', '000004']
+#correct = ['00']
 
 
 class Blockchain():
