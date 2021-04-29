@@ -10,8 +10,8 @@ auth_clients = []  # autherised client's public keys - only used to create genes
 
 # Difficulty Setting (which hashes are accepted for Proof of Work)
 
-correct = ['000001', '000002', '000003', '000004']
-#correct = ['00']
+#correct = ['000001', '000002', '000003', '000004']
+correct = ['000']
 
 
 class Blockchain():
@@ -34,7 +34,7 @@ class Blockchain():
 
             hash = self.hash(block)
 
-            if hash[0:2] not in correct:
+            if hash[0:3] not in correct:
                 valid = False
 
                 break
@@ -107,7 +107,7 @@ class Blockchain():
 
             hash = self.hash(block)
 
-            if hash[0:2] in correct:
+            if hash[0:3] in correct:
                 found = True
 
             attempt += 1

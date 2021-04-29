@@ -62,8 +62,7 @@ except:
 
 
 def disconnect_net():
-    socket.close()
-    sys.exit(1)
+    sys.exit()
 
 # put query responses here
 
