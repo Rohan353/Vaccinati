@@ -88,7 +88,12 @@ def handle_client(conn, addr):
 
     while connected:
 
-        msg_type = conn.recv(1024).decode(FORMAT)
+        try:
+            msg_type = conn.recv(1024).decode(FORMAT)
+        except:
+            clients.remove(conn)
+
+            break
 
         print('recieved message {}'.format(msg_type))
 
@@ -218,6 +223,8 @@ def handle_client(conn, addr):
                     c.send(state_pending.encode(FORMAT))
                     time.sleep(0.05)
                     c.send(identification)
+
+    print(f'{ADDR} Disconnected')
 
 
 def blockchain_lookup():

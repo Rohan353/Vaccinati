@@ -5,6 +5,7 @@ import time
 import threading
 import tkinter as tk
 import json
+import sys
 from modules import blockchain
 from modules.pki import pki
 
@@ -61,7 +62,7 @@ except:
 
 
 def disconnect_net():
-    pass
+    sys.exit()
 
 # put query responses here
 
@@ -157,24 +158,26 @@ def mine_blockchain():
 
     print('Mine blockchain')
 
+    stop_button = tk.Button(
+        master=window, text='Stop Mining', command=stop_mine)
+
     stop_button.grid(row=1, column=1)
 
     if waiting_list != []:
 
-        while b.auth_mine == True:
-
-            if waiting_list == []:
-                break
+        while b.auth_mine == True and waiting_list != []:
 
             for i in waiting_list:
 
                 b.new_block(i, name)
 
-                time.sleep(10)
+                waiting_list.remove(i)
 
                 s.send(state_blockchain.encode(FORMAT))
 
                 send_blockchain()
+
+                time.sleep(3)
     else:
         print('Nothing in waiting list')
 
@@ -216,7 +219,6 @@ add_button = tk.Button(master=window, text='Vaccine', command=add_block)
 disconnect_button = tk.Button(
     master=window, text='Disconnect', command=disconnect_net)
 
-stop_button = tk.Button(master=window, text='Stop Mining', command=stop_mine)
 
 entry_box = tk.Entry(master=window)
 submit_button = tk.Button(master=window, text='submit', command=submit_block)
