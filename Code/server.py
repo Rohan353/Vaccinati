@@ -12,6 +12,10 @@ the blockchain will use a client-host model with one trusted host - my ddns addr
 In the future, the blockchain may be migrated to a p2p model if it performs well.
 '''
 
+
+##########################
+
+
 import socket
 import threading
 import csv
@@ -30,6 +34,7 @@ HOST = '0.0.0.0'  # allow for loop back interface
 PORT = 5006  # router forwards port 5001 >> 5006
 FORMAT = 'utf-8'
 DISCONNECT = '!DISCONNECT'  # disconnect code so clients can be safely disconnected
+global clients
 clients = set()  # save connected clients
 HEADER = 64
 ADDR = (HOST, PORT)
@@ -45,6 +50,9 @@ state_pending = 'sPending'
 ask_blockchain = 'aBlockchain'
 
 respond_blockchain = 'rBlockchain'
+
+query_security = 'qSec'
+
 
 global new_blockchain
 new_blockchain = {}
@@ -94,7 +102,9 @@ def handle_client(conn, addr):
 
                 num_clients = num_clients//2
 
-                search_clients = clients
+                search_clients = clients.copy()
+
+                print(clients)
 
                 search_clients.remove(conn)
 
@@ -168,25 +178,54 @@ def handle_client(conn, addr):
             b.compare_chain(uncoded_blockchain)
             save_blockchain()
 
-            search_clients = clients
-
-            search_clients.remove(conn)
-
             smsg = encoded_blockchain.encode(FORMAT)
             msg_length = len(smsg)
             send_length = str(msg_length).encode(FORMAT)
             send_length += b' ' * (HEADER-len(send_length))
 
-            for c in search_clients:
+            for c in clients:
 
-                c.send(state_blockchain.encode(FORMAT))
+                c.send(query_blockchain.encode(FORMAT))
                 time.sleep(0.05)
                 c.send(send_length)
                 time.sleep(0.05)
                 c.send(smsg)
 
         if msg_type == state_pending:
-            pass
+
+            identification = conn.recv(1024)
+
+            og_num = str(random.randint(1, 10000000))
+
+            test_num = bytes(og_num, encoding='utf-8')
+
+            encrypted_num = pki.encrypt(test_num)
+
+            conn.send(query_security.encode(FORMAT))
+            time.sleep(0.05)
+            conn.send(encrypted_num)
+
+            decrypted_num = conn.recv(1024).decode(FORMAT)
+
+            if 1 == 1:
+
+                print('Identification Verified')
+                print(clients)
+
+                for c in clients:
+
+                    print('Sent out pending')
+                    c.send(state_pending.encode(FORMAT))
+                    time.sleep(0.05)
+                    c.send(identification)
+
+
+def blockchain_lookup():
+
+    pass
+
+
+# look through blockchain and return bool
 
 
 # website
@@ -231,6 +270,7 @@ if __name__ == '__main__':
     # website_thread = threading.Thread(target=start_website)
     # website_thread.start()
     b = blockchain.Blockchain()
+
     x = input('Load blockchain')
     if x == 'yes':
         load_blockchain()
@@ -242,6 +282,7 @@ if __name__ == '__main__':
     while True:
         conn, addr = s.accept()
         clients.add(conn)
+        print(len(clients))
         # starts a new thread of the handle_client function for each client
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()

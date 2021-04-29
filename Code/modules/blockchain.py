@@ -79,8 +79,6 @@ class Blockchain():
 
         self.chain.append(block)
 
-        return block
-
     @property
     def last_block(self):
 
@@ -99,7 +97,9 @@ class Blockchain():
         found = False
         attempt = 0
 
-        while found == False:
+        self.auth_mine = True
+
+        while found == False and self.auth_mine == True:
 
             nonce = random.randint(1, 4294967296)
 
