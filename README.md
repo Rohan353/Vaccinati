@@ -34,5 +34,5 @@ vaccinati.blockchain@gmail.com
 Installation
 --------
 
-Please refer to the [setup guide](https://github.com/Rohan353/DIDI-2020/wiki/Installation-Guide) on the wiki
+Please refer to the [installation guide](https://github.com/Rohan353/DIDI-2020/wiki/Installation-Guide) on the wiki
 
