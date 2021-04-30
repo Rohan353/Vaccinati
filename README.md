@@ -26,6 +26,9 @@ Kourosh Mardani
 
 Ivar Boarsma
 
+#### Email:
+
+vaccinati.blockchain@gmail.com
 
 
 Installation
