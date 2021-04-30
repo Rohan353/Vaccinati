@@ -226,17 +226,18 @@ def handle_client(conn, addr):
 
     print(f'{ADDR} Disconnected')
 
-
-def blockchain_lookup():
-
-    pass
+# checks through blockchain
 
 
-# look through blockchain and return bool
+def blockchain_lookup(lookup):
+
+    for block in b.chain:
+        if block['identification'] == lookup:
+            return True
 
 
 # website
-'''
+
 app = Flask(__name__)
 
 
@@ -261,7 +262,9 @@ def my_form_post():
     if len(processed_text) != 8:
         return render_template('errortrap2.html')
 
-    if processed_text == '22121232':  # put call here
+    result = blockchain_lookup(processed_text)
+
+    if result == True:
         return render_template('form2.html')
 
     else:
@@ -271,11 +274,10 @@ def my_form_post():
 def start_website():
     app.run(debug=False, host='0.0.0.0')
 
-'''
 
 if __name__ == '__main__':
-    # website_thread = threading.Thread(target=start_website)
-    # website_thread.start()
+    website_thread = threading.Thread(target=start_website)
+    website_thread.start()
     b = blockchain.Blockchain()
 
     x = input('Load blockchain')
