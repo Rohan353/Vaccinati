@@ -31,7 +31,7 @@ ADDR = (HOST, PORT)
 # blockchain constants
 
 waiting_list = []
-name = 'rohan'
+name = 'slinky'
 
 # network constants
 
@@ -84,7 +84,7 @@ def send_blockchain():
 
 def handle_server():
 
-    print('Listening on server')
+    print('Listening on  the server')
 
     while True:
 
