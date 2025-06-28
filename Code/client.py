@@ -246,3 +246,6 @@ if __name__ == '__main__':
     server_thread.start()
 
     s.send(message)  # send first blockchain query
+
+
+# comment for checking
